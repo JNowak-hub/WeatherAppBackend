@@ -7,4 +7,4 @@ FROM gcr.io/distroless/java:11
 COPY --from=build /backend/backend.jar /backend/backend.jar
 WORKDIR /backend
 EXPOSE 8080
-CMD ["/backend/backend.jar"]
+CMD ["backend.jar"]
