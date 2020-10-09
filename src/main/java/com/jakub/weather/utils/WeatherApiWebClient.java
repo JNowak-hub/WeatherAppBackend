@@ -13,7 +13,6 @@ import java.util.Optional;
 public class WeatherApiWebClient {
 
     public Optional<WeatherResponse> getDataFromApi(String cityName){
-
         WebClient.RequestBodySpec request = WebClient.create()
                 .method(HttpMethod.POST)
                 .uri(URI.create("http://api.openweathermap.org/data/2.5/weather?q="+ cityName +"&appid=8af1f753ac7c4d67cd7987b1c374e618"));
