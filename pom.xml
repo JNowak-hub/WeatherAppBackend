@@ -10,6 +10,7 @@
 	</parent>
 	<groupId>com.jakub</groupId>
 	<artifactId>weather</artifactId>
+	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>weather</name>
 	<description>application for weather information</description>
