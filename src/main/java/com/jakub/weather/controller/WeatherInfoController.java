@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/weather")
-@CrossOrigin({"http://localhost:3000","http://localhost:8080","http://localhost:5000"})
 public class WeatherInfoController {
 
     private CrucialWeatherDataService service;
