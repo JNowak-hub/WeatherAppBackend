@@ -1,8 +1,7 @@
 package com.jakub.weather.utils;
 
-import com.jakub.weather.model.weather.dto.UserSettingRequest;
-import com.jakub.weather.model.weather.user.UserEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.jakub.weather.model.dto.UserSettingRequest;
+import com.jakub.weather.model.user.UserEntity;
 import org.springframework.stereotype.Service;
 
 @Service

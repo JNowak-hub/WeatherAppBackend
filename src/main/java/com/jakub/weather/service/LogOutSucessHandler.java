@@ -1,6 +1,6 @@
 package com.jakub.weather.service;
 
-import com.jakub.weather.model.weather.user.UserEntity;
+import com.jakub.weather.model.user.UserEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.stereotype.Service;

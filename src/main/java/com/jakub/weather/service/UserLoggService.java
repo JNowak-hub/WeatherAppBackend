@@ -1,7 +1,8 @@
 package com.jakub.weather.service;
 
-import com.jakub.weather.model.weather.user.UserEntity;
-import com.jakub.weather.model.weather.user.UserLoggEntity;
+import com.jakub.weather.exceptions.UserNotFoundException;
+import com.jakub.weather.model.user.UserEntity;
+import com.jakub.weather.model.user.UserLoggEntity;
 import com.jakub.weather.repo.UserLoggEntityRepo;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ public class UserLoggService {
     }
 
     public void loggLogin(UserEntity user){
+        if(user == null){
+            throw new UserNotFoundException("User cannot be null");
+        }
         UserLoggEntity logg = new UserLoggEntity();
         logg.setMessage("User Logged In");
         logg.setTime(LocalDateTime.now());
@@ -25,6 +29,9 @@ public class UserLoggService {
     }
 
     public void logLogout(UserEntity user){
+        if(user == null){
+            throw new UserNotFoundException("User cannot be null");
+        }
         UserLoggEntity logg = new UserLoggEntity();
         logg.setMessage("User LogOut");
         logg.setTime(LocalDateTime.now());
@@ -33,6 +40,9 @@ public class UserLoggService {
     }
 
     public void userCreated(UserEntity user){
+        if(user == null){
+            throw new UserNotFoundException("User cannot be null");
+        }
         UserLoggEntity logg = new UserLoggEntity();
         logg.setMessage("User registered");
         logg.setTime(LocalDateTime.now());
