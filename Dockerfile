@@ -8,4 +8,4 @@ FROM maven:3.6.3-jdk-11
 COPY --from=build /backend/backend.jar /backend/backend.jar
 WORKDIR /backend
 EXPOSE 8080
-CMD ["./backend.jar"]
+CMD ["java", "-jar", "./backend.jar"]
