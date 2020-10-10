@@ -30,7 +30,7 @@ public class CustomAuthorizationManagerTest {
 
     private UserEntity user = new UserEntity();
     private final String USER_PASSWORD = "password";
-    private final String USERNAME = "username";
+    private final String USERNAME = "usernametest";
 
     @BeforeEach
     void init() {
