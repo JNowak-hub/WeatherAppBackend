@@ -34,9 +34,9 @@ public class LoginSingInController {
 
     @ApiOperation(value = "Authorization of User based on username and password", notes = "Username and password needs to be provided here as JSON")
     @PostMapping("/login")
-    public ResponseEntity<HttpServletResponse> login(@RequestBody AuthorizationRequest authRequest, HttpServletResponse response) {
+    public ResponseEntity<String> login(@RequestBody AuthorizationRequest authRequest, HttpServletResponse response) {
         loginService.authorization(authRequest);
-        response.addHeader("Location","http://localhost:3000/Home");
-        return ResponseEntity.ok(response);
+        response.addHeader("Location","http://localhost:5000/Home");
+        return ResponseEntity.ok("Log in successfully");
     }
 }

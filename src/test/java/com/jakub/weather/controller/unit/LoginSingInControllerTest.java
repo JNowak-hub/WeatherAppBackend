@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jakub.weather.configuration.CustomExceptionHandler;
 import com.jakub.weather.controller.LoginSingInController;
 import com.jakub.weather.exceptions.UserAlreadyExists;
+import com.jakub.weather.exceptions.UserNotFoundException;
 import com.jakub.weather.exceptions.WrongInputException;
+import com.jakub.weather.model.authorization.AuthorizationRequest;
 import com.jakub.weather.model.user.UserEntity;
 import com.jakub.weather.service.LoginService;
 import com.jakub.weather.service.UserService;
@@ -14,8 +16,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
@@ -76,19 +81,45 @@ public class LoginSingInControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-//    @Test
-//    void when_login_then_returnServletResponse() throws Exception {
-//        mockSetup();
-//        AuthorizationRequest authRequest = new AuthorizationRequest();
-//        authRequest.setUserName("username");
-//        authRequest.setPassword("password");
-//        ObjectMapper objectMapper = new ObjectMapper();
-//
-//        mockMvc.perform(post("/api/auth/login")
-//        .contentType(MediaType.APPLICATION_JSON)
-//        .content(objectMapper.writeValueAsString(authRequest)))
-//                .andExpect(ResultMatcher.matchAll());
-//    }
+    @Test
+    void when_login_then_returnOk() throws Exception {
+        mockSetup();
+        AuthorizationRequest authRequest = new AuthorizationRequest();
+        authRequest.setUserName("username");
+        authRequest.setPassword("password");
+        ObjectMapper objectMapper = new ObjectMapper();
 
+        mockMvc.perform(post("/api/auth/login")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(authRequest)))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("Log in successfully"));
+    }
+    @Test
+    void when_login_then_ThrowBadCredentialsException() throws Exception {
+        mockSetup();
+        AuthorizationRequest authRequest = new AuthorizationRequest();
+        authRequest.setUserName("username");
+        authRequest.setPassword("password");
+        ObjectMapper objectMapper = new ObjectMapper();
+        doThrow(BadCredentialsException.class).when(loginService).authorization(any());
+        mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authRequest)))
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    void when_login_then_ThrowUserNotFoundException() throws Exception {
+        mockSetup();
+        AuthorizationRequest authRequest = new AuthorizationRequest();
+        authRequest.setUserName("username");
+        authRequest.setPassword("password");
+        ObjectMapper objectMapper = new ObjectMapper();
+        doThrow(UserNotFoundException.class).when(loginService).authorization(any());
+        mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authRequest)))
+                .andExpect(status().isNotFound());
+    }
 
 }

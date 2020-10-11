@@ -4,6 +4,7 @@ package com.jakub.weather.configuration;
 import com.jakub.weather.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,5 +43,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler(UserSettingsNotFoundException.class)
     public final ResponseEntity<String> handleUserSettingsNotFoundException(UserSettingsNotFoundException ex, WebRequest request) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(BadCredentialsException.class)
+    public final ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
