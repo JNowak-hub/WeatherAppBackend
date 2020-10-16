@@ -17,35 +17,35 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler
 {
     @ExceptionHandler(UserAlreadyExists.class)
     public final ResponseEntity<Object> handleUserAlreadyExistsException(UserAlreadyExists ex, WebRequest request) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public final ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    public final ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
     @ExceptionHandler(WeatherNotFoundException.class)
-    public final ResponseEntity<String> handleWeatherNotFoundException(WeatherNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    public final ResponseEntity<Object> handleWeatherNotFoundException(WeatherNotFoundException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
     @ExceptionHandler(WrongInputException.class)
-    public final ResponseEntity<String> handleWrongInputException(WrongInputException ex, WebRequest request) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public final ResponseEntity<Object> handleWrongInputException(WrongInputException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
     @ExceptionHandler(RoleNotFoundException.class)
-    public final ResponseEntity<String> handleRoleNotFoundException(RoleNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    public final ResponseEntity<Object> handleRoleNotFoundException(RoleNotFoundException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
     @ExceptionHandler(UserSettingsNotFoundException.class)
-    public final ResponseEntity<String> handleUserSettingsNotFoundException(UserSettingsNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    public final ResponseEntity<Object> handleUserSettingsNotFoundException(UserSettingsNotFoundException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
     @ExceptionHandler(BadCredentialsException.class)
     public final ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }
