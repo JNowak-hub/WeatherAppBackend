@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin("*")
 public class LoginSingInController {
 
 
