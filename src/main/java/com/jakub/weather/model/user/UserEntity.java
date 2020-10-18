@@ -16,11 +16,7 @@ public class UserEntity implements UserDetails {
     private String userName;
     @Column(nullable = false)
     private String password;
-//
-//    @ElementCollection(targetClass= RoleEnum.class, fetch = FetchType.LAZY)
-//    @Enumerated(EnumType.STRING)
-//    @CollectionTable(name="user_roles",
-//    joinColumns = @JoinColumn(name = "user_id"))
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "users")
     private List<Role> role = new ArrayList<>();
 

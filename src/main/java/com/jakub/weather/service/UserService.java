@@ -1,15 +1,26 @@
 package com.jakub.weather.service;
 
+import com.jakub.weather.configuration.CustomAuthorizationManager;
 import com.jakub.weather.exceptions.UserAlreadyExists;
 import com.jakub.weather.exceptions.UserNotFoundException;
 import com.jakub.weather.exceptions.WrongInputException;
+import com.jakub.weather.model.authorization.AuthorizationRequest;
+import com.jakub.weather.model.dto.UserEntityRequest;
 import com.jakub.weather.model.user.UserEntity;
 import com.jakub.weather.model.user.UserSettingsEntity;
+import com.jakub.weather.utils.UserEntityMapper;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.jakub.weather.repo.UserRepo;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,11 +34,14 @@ public class UserService {
 
     private BCryptPasswordEncoder encoder;
 
-    public UserService(UserRepo userRepo, UserLoggService loggService, RoleService roleService, BCryptPasswordEncoder encoder) {
+    private UserEntityMapper userEntityMapper;
+
+    public UserService(UserRepo userRepo, UserLoggService loggService, RoleService roleService, BCryptPasswordEncoder encoder, UserEntityMapper userEntityMapper) {
         this.userRepo = userRepo;
         this.loggService = loggService;
         this.roleService = roleService;
         this.encoder = encoder;
+        this.userEntityMapper = userEntityMapper;
     }
 
     public UserEntity findById(Long id) {
@@ -58,9 +72,18 @@ public class UserService {
         throw new UserNotFoundException("User : " + username + " doesn't exists");
     }
 
+    @Transactional
     public UserEntity updateUser(UserEntity user) {
         validateUser(user);
         return userRepo.save(user);
+    }
+
+    @Transactional
+    public UserEntity updateUser(UserEntityRequest userRequest) {
+        UserEntity userToUpdate = findUserByUsername(((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserName());
+        userToUpdate = userEntityMapper.updateUser(userRequest, userToUpdate);
+
+        return userRepo.save(userToUpdate);
     }
 
     @Transactional
