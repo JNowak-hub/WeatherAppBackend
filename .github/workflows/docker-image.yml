@@ -18,7 +18,7 @@ jobs:
     - name: Write DB url
       uses: christian-draeger/write-properties@1.0.1
       with:
-        path: '**/application-prod.properties'
+        path: '**/*-prod.properties'
         property: 'spring.datasource.url'
         value: ${{secrets.AZURE_DB_URL}}
     - name: Write DB USERNAME
