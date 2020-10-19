@@ -46,7 +46,7 @@ public class UserSettingsService {
         UserEntity currentUser = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity userInDb = userService.findUserByUsername(currentUser.getUsername());
         settingMapper.changeSettings(request, userInDb);
-        userService.updateUser(userInDb);
+        userService.saveUser(userInDb);
     }
 
 }

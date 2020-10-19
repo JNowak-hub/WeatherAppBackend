@@ -100,7 +100,7 @@ public class UserSettingsServiceTest {
         settingsService.updateUserSettings(request);
         //then
         verify(settingMapper).changeSettings(request, user);
-        verify(userService).updateUser(user);
+        verify(userService).saveUser(user);
     }
     @Test
     void when_updateUserSettings_then_throwUserNotFoundException(){

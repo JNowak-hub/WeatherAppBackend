@@ -73,7 +73,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserEntity updateUser(UserEntity user) {
+    public UserEntity saveUser(UserEntity user) {
         validateUser(user);
         return userRepo.save(user);
     }

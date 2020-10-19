@@ -3,17 +3,21 @@ package com.jakub.weather.service.unit;
 import com.jakub.weather.exceptions.UserAlreadyExists;
 import com.jakub.weather.exceptions.UserNotFoundException;
 import com.jakub.weather.exceptions.WrongInputException;
+import com.jakub.weather.model.dto.UserEntityRequest;
 import com.jakub.weather.model.user.Role;
 import com.jakub.weather.model.user.UserEntity;
 import com.jakub.weather.repo.UserRepo;
 import com.jakub.weather.service.RoleService;
 import com.jakub.weather.service.UserLoggService;
 import com.jakub.weather.service.UserService;
+import com.jakub.weather.utils.UserEntityMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
@@ -35,6 +39,8 @@ public class UserServiceTest {
     private BCryptPasswordEncoder passwordEncoder;
     @Mock
     private RoleService roleService;
+    @Mock
+    private UserEntityMapper userEntityMapper;
     @InjectMocks
     private UserService userService;
 
@@ -172,7 +178,7 @@ public class UserServiceTest {
         //given
         when(userRepo.save(user)).thenReturn(user);
         //when
-        UserEntity savedUser = userService.updateUser(user);
+        UserEntity savedUser = userService.saveUser(user);
         //then
         assertThat(savedUser.getUserName()).isEqualTo(user.getUserName());
         assertThat(savedUser.getPassword()).isEqualTo(user.getPassword());
@@ -183,7 +189,7 @@ public class UserServiceTest {
         //given
         user = null;
         //when
-        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.updateUser(user));
+        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.saveUser(user));
         //then
         assertThat(exception.getMessage()).isEqualTo("User cannot be null");
     }
@@ -192,7 +198,7 @@ public class UserServiceTest {
         //given
         user.setPassword("");
         //when
-        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.updateUser(user));
+        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.saveUser(user));
         //then
         assertThat(exception.getMessage()).isEqualTo("userName or Password cannot be empty");
     }
@@ -201,7 +207,7 @@ public class UserServiceTest {
         //given
         user.setPassword("  ");
         //when
-        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.updateUser(user));
+        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.saveUser(user));
         //then
         assertThat(exception.getMessage()).isEqualTo("userName or Password cannot be empty");
     }
@@ -210,7 +216,7 @@ public class UserServiceTest {
         //given
         user.setPassword(null);
         //when
-        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.updateUser(user));
+        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.saveUser(user));
         //then
         assertThat(exception.getMessage()).isEqualTo("userName or Password cannot be empty");
     }
@@ -219,7 +225,7 @@ public class UserServiceTest {
         //given
         user.setUserName("");
         //when
-        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.updateUser(user));
+        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.saveUser(user));
         //then
         assertThat(exception.getMessage()).isEqualTo("userName or Password cannot be empty");
     }
@@ -228,7 +234,7 @@ public class UserServiceTest {
         //given
         user.setUserName("   ");
         //when
-        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.updateUser(user));
+        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.saveUser(user));
         //then
         assertThat(exception.getMessage()).isEqualTo("userName or Password cannot be empty");
     }
@@ -237,7 +243,7 @@ public class UserServiceTest {
         //given
         user.setUserName(null);
         //when
-        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.updateUser(user));
+        WrongInputException exception = assertThrows(WrongInputException.class, () -> userService.saveUser(user));
         //then
         assertThat(exception.getMessage()).isEqualTo("userName or Password cannot be empty");
     }
@@ -264,5 +270,38 @@ public class UserServiceTest {
         assertThat(exception.getMessage()).isEqualTo("User : " + username + " doesn't exists");
     }
 
+    @Test
+    void when_updateUser_then_returnUpdatedUser(){
+        //given
+        UserEntityRequest userRequest = new UserEntityRequest();
+        userRequest.setPassword("newPassword");
+        userRequest.setUserName("newUserName");
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword()));
+        UserEntity updatedUser = user;
+        updatedUser.setPassword(userRequest.getPassword());
+        updatedUser.setUserName(userRequest.getUserName());
+        when(userEntityMapper.updateUser(userRequest, user)).thenReturn(updatedUser);
+        when(userRepo.save(any())).thenReturn(updatedUser);
+        when(userRepo.findByUsername(anyString())).thenReturn(Optional.ofNullable(user));
+        //when
+        UserEntity userAfterUpdate = userService.updateUser(userRequest);
+        //then
+        assertThat(userAfterUpdate.getPassword()).isEqualTo(userRequest.getPassword());
+        assertThat(userAfterUpdate.getUserName()).isEqualTo(userRequest.getUserName());
+    }
+    @Test
+    void when_updateUser_then_throwUserNotFoundException(){
+        //given
+        UserEntityRequest userRequest = new UserEntityRequest();
+        userRequest.setPassword("newPassword");
+        userRequest.setUserName("newUserName");
+        UserEntity fakeUser = new UserEntity("fakeUserName", "fakePassword");
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(fakeUser, fakeUser.getPassword()));
+        when(userRepo.findByUsername(user.getUsername())).thenReturn(Optional.ofNullable(user));
+        //when
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> userService.updateUser(userRequest));
+        //then
+        assertThat(exception.getMessage()).isEqualTo("User : " + fakeUser.getUserName() + " doesn't exists");
+    }
 
 }
