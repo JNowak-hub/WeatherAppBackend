@@ -5,7 +5,10 @@ import com.jakub.weather.configuration.CustomExceptionHandler;
 import com.jakub.weather.controller.UserController;
 import com.jakub.weather.exceptions.UserNotFoundException;
 import com.jakub.weather.exceptions.WrongInputException;
+import com.jakub.weather.model.dto.UserEntityRequest;
 import com.jakub.weather.model.dto.UserSettingRequest;
+import com.jakub.weather.model.user.Role;
+import com.jakub.weather.model.user.UserEntity;
 import com.jakub.weather.service.UserService;
 import com.jakub.weather.service.UserSettingsService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,10 +22,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -84,5 +91,33 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
+    }
+    @Test
+    void when_updateUser_returnUserUpdated() throws Exception {
+        UserEntityRequest userEntityRequest = new UserEntityRequest();
+        userEntityRequest.setUserName("newUserName");
+        userEntityRequest.setPassword("newPassword");
+        UserEntity updatedUser = new UserEntity(userEntityRequest.getUserName(), userEntityRequest.getPassword());
+        updatedUser.setRole(Collections.singletonList(new Role("User")));
+        when(userService.updateUser(any())).thenReturn(updatedUser);
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(post("/api/user/update/user")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(userEntityRequest)))
+                .andExpect(status().isOk())
+        .andExpect(content().string("User updated"));
+    }
+
+    @Test
+    void when_updateUser_throwUserNotFoundException() throws Exception {
+        UserEntityRequest userEntityRequest = new UserEntityRequest();
+        userEntityRequest.setUserName("newUserName");
+        userEntityRequest.setPassword("newPassword");
+        when(userService.updateUser(any())).thenThrow(UserNotFoundException.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(post("/api/user/update/user")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(userEntityRequest)))
+                .andExpect(status().isNotFound());
     }
 }
