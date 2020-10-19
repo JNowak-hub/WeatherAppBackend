@@ -10,27 +10,6 @@ env:
   AZURE_WEB_APP: 'weather-web-app-backend'
 jobs:
 
-  fillcredentials:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Write DB url
-      uses: christian-draeger/write-properties@1.0.1
-      with:
-        path: '**/*-prod.properties'
-        property: 'spring.datasource.url'
-        value: ${{secrets.AZURE_DB_URL}}
-    - name: Write DB USERNAME
-      uses: christian-draeger/write-properties@1.0.1
-      with:
-        path: './src/main/resources/application-prod.properties'
-        property: 'spring.datasource.username'
-        value: ${{secrets.AZURE_DB_USERNAME}}  
-    - name: Write DB PASSWORD
-      uses: christian-draeger/write-properties@1.0.1
-      with:
-        path: './src/main/resources/application-prod.properties'
-        property: 'spring.datasource.password'
-        value: ${{secrets.AZURE_DB_PASSWORD}} 
   build:
     runs-on: ubuntu-latest
     steps:
