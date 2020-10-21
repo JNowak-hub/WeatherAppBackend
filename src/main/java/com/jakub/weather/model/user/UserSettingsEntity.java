@@ -1,5 +1,9 @@
 package com.jakub.weather.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import net.minidev.json.annotate.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -18,10 +22,12 @@ public class UserSettingsEntity {
     @OneToOne(cascade = CascadeType.ALL, targetEntity = UserEntity.class, mappedBy = "settings")
     private UserEntity user;
 
+    @JsonIgnore
     public UserEntity getUser() {
         return user;
     }
 
+    @JsonProperty
     public void setUser(UserEntity user) {
         this.user = user;
     }

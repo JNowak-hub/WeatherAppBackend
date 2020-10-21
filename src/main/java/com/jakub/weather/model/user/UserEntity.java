@@ -1,5 +1,8 @@
 package com.jakub.weather.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,10 +23,10 @@ public class UserEntity implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "users")
     private List<Role> role = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
     private Set<UserLoggEntity> userLogs = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL, targetEntity = UserSettingsEntity.class)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = UserSettingsEntity.class)
     private UserSettingsEntity settings;
 
 
@@ -72,6 +75,7 @@ public class UserEntity implements UserDetails {
         return getRole();
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -101,6 +105,7 @@ public class UserEntity implements UserDetails {
         return true;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }
