@@ -40,6 +40,7 @@ public class LoginSingInControllerTest {
     private LoginService loginService;
     @InjectMocks
     private LoginSingInController controller;
+
     @BeforeEach
     void mockSetup() {
         this.mockMvc = MockMvcBuilders
@@ -51,12 +52,13 @@ public class LoginSingInControllerTest {
     @Test
     void when_singIn_then_returnResponseOkAndUser() throws Exception {
         UserEntity user = new UserEntity("username", "password");
-        when(userService.createNewUser(user)).thenReturn(user);
+        when(userService.createNewUser(any())).thenReturn(user);
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(post("/api/auth/signIn")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("user " + user.getUserName() + " created"));
     }
 
     @Test
@@ -90,11 +92,12 @@ public class LoginSingInControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
 
         mockMvc.perform(post("/api/auth/login")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(authRequest)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Log in successfully"));
     }
+
     @Test
     void when_login_then_ThrowBadCredentialsException() throws Exception {
         mockSetup();
@@ -108,6 +111,7 @@ public class LoginSingInControllerTest {
                 .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     void when_login_then_ThrowUserNotFoundException() throws Exception {
         mockSetup();
