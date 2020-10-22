@@ -1,8 +1,8 @@
 package com.jakub.weather.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 
@@ -19,7 +19,7 @@ public class UserSettingsEntity {
     @Column
     private Long daysAmount;
 
-    @OneToOne(cascade = CascadeType.ALL, targetEntity = UserEntity.class, mappedBy = "settings")
+    @OneToOne(cascade = CascadeType.ALL, targetEntity = UserEntity.class, mappedBy = "settings", fetch = FetchType.LAZY)
     private UserEntity user;
 
     @JsonIgnore

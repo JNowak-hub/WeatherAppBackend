@@ -1,8 +1,7 @@
 package com.jakub.weather.model.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -38,6 +37,7 @@ public class UserEntity implements UserDetails {
         this.settings = settings;
     }
 
+    @JsonIgnore
     public List<Role> getRole() {
         return role;
     }
