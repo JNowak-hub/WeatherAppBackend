@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface RoleRepo extends JpaRepository<Role, Long> {
 
-    @Query(value = "Select * from role where role=?1", nativeQuery = true)
+    @Query(value = "SELECT r FROM Role r where r.role = :roleName")
     Optional<Role> findByName(String roleName);
 }
